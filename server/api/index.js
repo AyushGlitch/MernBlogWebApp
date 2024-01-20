@@ -1,16 +1,7 @@
 import express from 'express';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
+import { dbConnect } from './db/dbConnect.js';
 
-dotenv.config();
-
-mongoose.connect(process.env.MONGODB_URL)
-.then( () => {
-    console.log('Connected to MongoDB');
-})
-.catch( (err) => {
-    console.log(err);
-})
+dbConnect()
 
 const app = express();
 
