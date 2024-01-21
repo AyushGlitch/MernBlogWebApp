@@ -45,7 +45,7 @@ export const signin = async (req, res, next) => {
             return next(errorHandler(400, 'Invalid Credentials'))
         }
 
-        const token = jwt.sign({ id: validUser._id }, process.env.JWT_KEY)
+        const token = jwt.sign({ id: validUser[0]._id }, process.env.JWT_KEY)
 
         const { password: hashedPassword, ...others } = validUser[0]._doc
 
