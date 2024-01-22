@@ -1,17 +1,21 @@
 import express from 'express';
 import { dbConnect } from './db/dbConnect.js';
 import authRoutes from './routes/auth.route.js';
+import userRoutes from './routes/user.route.js';
+import cookieParser from 'cookie-parser';
 
 dbConnect()
 
 const app = express();
 app.use(express.json())
+app.use(cookieParser())
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
 })
 
 app.use('/api/auth', authRoutes)
+app.use('/api/user', userRoutes)
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
