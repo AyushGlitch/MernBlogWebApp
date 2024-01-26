@@ -18,22 +18,22 @@ export const updateUser = async (req, res, next) => {
         if(req.body.username.match(/[^a-zA-Z0-9]/)){
             return next(errorHandler(400, 'Username cannot contain special characters'))
         }
+    }
 
-        try {
-            const updatedUser = await User.findByIdAndUpdate(req.params.userId, {
-                $set: {
-                    username: req.body.username,
-                    password: req.body.password,
-                    email: req.body.email,
-                    profilePicture: req.body.profilePicture
-                },
-            }, { new: true })
+    try {
+        const updatedUser = await User.findByIdAndUpdate(req.params.userId, {
+            $set: {
+                username: req.body.username,
+                password: req.body.password,
+                email: req.body.email,
+                profilePicture: req.body.profilePicture
+            },
+        }, { new: true })
 
-            const {password, ...others} = updatedUser._doc
-            res.status(200).json(others)
+        const {password, ...others} = updatedUser._doc
+        res.status(200).json(others)
 
-        } catch (error) {
-            next(error)
-        }
+    } catch (error) {
+        next(error)
     }
 }

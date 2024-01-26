@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Alert, Button, TextInput } from 'flowbite-react'
 import {app} from '../firebase.js'
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { CircularProgressbar } from 'react-circular-progressbar'
 import 'react-circular-progressbar/dist/styles.css'
+import { updateStart, updateSuccess, updateFailure } from '../redux/slices/userSlices/userSlice.js'
+
 
 export default function DashProfile() {
 
@@ -15,6 +17,9 @@ export default function DashProfile() {
     const [imageFileUploadProgress, setImageFileUploadProgress] = useState(0)
     const [imageFileUploadError, setImageFileUploadError] = useState(null)
 
+    const [formData, setFormData] = useState({})
+    const dispatch = useDispatch()
+    const [updateUserSuccess, setUpdateUserSuccess] = useState(false)
 
     const handleImageChange = (e) => {
         const file= e.target.files[0]
@@ -54,16 +59,51 @@ export default function DashProfile() {
             () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                     setImageFileUrl(downloadURL)
+                    setFormData({...formData, profilePicture: downloadURL})
                 })
             }
         )
+    }
+
+    const handleChange = (e) => {
+        setFormData({...formData, [e.target.id]: e.target.value})
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        
+        if(Object.keys(formData).length === 0){
+            return
+        }
+
+        try {
+            dispatch(updateStart())
+            const res = await fetch(`/api/user/update/${currentUser._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+
+            const data = await res.json()
+            if(res.ok){
+                dispatch(updateSuccess(data))
+                setUpdateUserSuccess("User Profile Updated Successfully..!!")
+            } else {
+                dispatch(updateFailure(data))
+            }
+
+        } catch (error) {
+            dispatch(updateFailure(error.message))
+        }
     }
 
   return (
     <div className=' max-w-lg mx-auto p-3 w-full'>
         <h1 className=' my-7 text-center font-semibold text-3xl'>Profile</h1>
 
-        <form className='flex flex-col gap-4'>
+        <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
             <input type='file' accept='/image/*' onChange={handleImageChange} ref={filePickerRef} hidden/>
             <div className=' relative w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full' onClick={() => filePickerRef.current.click()}>
 
@@ -90,9 +130,9 @@ export default function DashProfile() {
                 imageFileUploadError && <Alert color='failure'> {imageFileUploadError} </Alert>
             }
 
-            <TextInput type='text' id='username' placeholder='Username' defaultValue={currentUser.username}/>
-            <TextInput type='email' id='email' placeholder='Email' defaultValue={currentUser.email}/>
-            <TextInput type='password' id='password' placeholder='Password' />
+            <TextInput type='text' id='username' placeholder='Username' defaultValue={currentUser.username} onChange={handleChange} />
+            <TextInput type='email' id='email' placeholder='Email' defaultValue={currentUser.email} onChange={handleChange}/>
+            <TextInput type='password' id='password' placeholder='Password' onChange={handleChange} />
 
             <Button type='submit' gradientDuoTone='purpleToBlue' outline>
                 Update
@@ -103,6 +143,12 @@ export default function DashProfile() {
             <span className=' cursor-pointer'>Delete Account</span>
             <span className=' cursor-pointer'>Sign Out</span>
         </div>
+
+        {
+            updateUserSuccess && <Alert color='success'>
+                {updateUserSuccess}
+            </Alert>
+        }
     </div>
   )
 }
