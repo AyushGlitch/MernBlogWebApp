@@ -7,6 +7,7 @@ import { CircularProgressbar } from 'react-circular-progressbar'
 import 'react-circular-progressbar/dist/styles.css'
 import { updateStart, updateSuccess, updateFailure, deleteUserStart, deleteUserSuccess, deleteUserFailure, signOutSuccess } from '../redux/slices/userSlices/userSlice.js'
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { Link } from 'react-router-dom'
 
 
 export default function DashProfile() {
@@ -187,6 +188,16 @@ export default function DashProfile() {
             <Button type='submit' gradientDuoTone='purpleToBlue' outline>
                 Update
             </Button>
+
+            {
+                currentUser.isAdmin && (
+                    <Link to={'/create-post'}>
+                        <Button type='button' gradientDuoTone='purpleToPink' className=' w-full'>
+                            Create A Post
+                        </Button>
+                    </Link>
+                )
+            }
         </form>
 
         <div className='flex justify-between text-red-500 mt-5'>
