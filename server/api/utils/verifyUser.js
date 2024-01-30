@@ -6,15 +6,17 @@ export const verifyToken = (req, res, next) => {
     const token = req.cookies.token
 
     if(!token){
-        return next(errorHandler(401, 'Unauthorized'))
+        return next(errorHandler(401, 'Unauthorized, token not found'))
     }
 
     jwt.verify(token, process.env.JWT_KEY, (err, user) => {
         if(err){
-            return next(errorHandler(401, 'Unauthorized'))
+            return next(errorHandler(401, 'Unauthorized, token not valid'))
         }
 
         req.user = user
+        console.log(req.user)
+        console.log(req.body)
         next()
     })
 }
