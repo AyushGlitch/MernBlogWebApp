@@ -3,12 +3,15 @@ import { Link } from 'react-router-dom';
 import {Button, Textarea} from 'flowbite-react'
 import { useEffect, useState } from 'react';
 import Comment from './Comment';
+import {useNavigate} from 'react-router-dom'
 
 export default function CommentSection({postId}) {
 
     const {currentUser} = useSelector(state => state.user)
     const [comment, setComment] = useState('')
     const [comments, setComments] = useState([])
+
+    const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -59,6 +62,36 @@ export default function CommentSection({postId}) {
         getComments()
     }, [])
 
+
+    const handleLike = async (commentId) => {
+        try {
+            if(!currentUser){
+                navigate('/sign-in')
+                return;
+            }
+
+            const res = await fetch(`/api/comment/likeComment/${commentId}`, {
+                method: 'PUT',
+            })
+            const data = await res.json()
+
+            if(res.ok){
+                setComments( comments.map( (comment) => (
+                    comment._id === commentId ? {
+                        ...comment,
+                        numberOfLikes: data.comment.numberOfLikes,
+                        likes: data.comment.likes,
+                    } : 
+                    comment
+                )))
+            }
+
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
+
+
   return (
     <div className=' max-w-2xl mx-auto w-full p-3'>
         {
@@ -108,7 +141,7 @@ export default function CommentSection({postId}) {
                     
                     {
                         comments.map( comment => (
-                            <Comment key={comment._id} comment={comment} />
+                            <Comment key={comment._id} comment={comment} onLike={handleLike}/>
                         ))
                     }
                 </>
