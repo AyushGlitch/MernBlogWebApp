@@ -67,7 +67,6 @@ export default function PostPage() {
 
             </div>
 
-            {console.log(post._id)}
             <CommentSection postId= {post._id}/>
         </main>
     )
