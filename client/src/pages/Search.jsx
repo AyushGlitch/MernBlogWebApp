@@ -10,7 +10,7 @@ export default function Search() {
     category: 'uncategorized',
   });
 
-  console.log(sidebarData);
+  
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showMore, setShowMore] = useState(false);
@@ -85,6 +85,7 @@ export default function Search() {
     const urlParams = new URLSearchParams(location.search);
     urlParams.set('startIndex', startIndex);
     const searchQuery = urlParams.toString();
+    console.log(searchQuery);
     const res = await fetch(`/api/post/getposts?${searchQuery}`);
     if (!res.ok) {
       return;
