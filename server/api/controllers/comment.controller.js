@@ -141,7 +141,7 @@ export const getcomments = async(req, res, next) => {
             message: 'Comments fetched successfully',
             comments,
             totalComments,
-            
+            lastMonthComments
         })
 
     } catch (error) {
