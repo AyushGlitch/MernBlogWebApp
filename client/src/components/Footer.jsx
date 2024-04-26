@@ -72,7 +72,7 @@ export default function FooterCom() {
 
             <Footer.Divider/>
             <div className='flex flex-col justify-center items-center'>
-                <Footer.Copyright href='#' by="Glitchy Blogs" year={new Date().getFullYear()}/>
+                <Footer.Copyright href='#' by="Bloggo" year={new Date().getFullYear()}/>
                 <div className='flex flex-row gap-2 mt-2 pb-2'>
                     <Footer.Icon href='#' icon={BsFacebook}/>
                     <Footer.Icon href='#' icon={BsInstagram}/>
