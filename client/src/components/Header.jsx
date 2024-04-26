@@ -116,7 +116,7 @@ export default function Header() {
 
       <Navbar.Collapse>
           <Navbar.Link active={path == '/'} as={'div'}>
-            <Link to='/home'>
+            <Link to='/'>
               Home
             </Link>
           </Navbar.Link>
